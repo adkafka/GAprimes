@@ -1,33 +1,41 @@
 /* Node class
- * Abstract class that represents possible nodes in a tree
+ * class that represents possible nodes in a tree
  */
-public class Node{
-    //temporary
-    private boolean operator;
-    public String value;
-
-    public boolean isOperator(){ return operator; }
-
-    public Node leftChild;
-    public Node rightChild;
+public abstract class Node{
+    //////////
+    //Fields//
+    //////////
+    
     public Node parent;
     
-    public Node(String value, boolean operator){
-        this.value=value;
-        this.operator=operator;
-        leftChild=null;
-        rightChild=null;
+    ////////////////
+    //Constructors//
+    ////////////////
+    /** No input constructor*/
+    public Node(){
         parent=null;
     }
-
-
-    @Override
-    public String toString(){
-        if(operator){
-            return leftChild.toString()+value+rightChild.toString();
-        }else{
-            return value;
+    
+    /** Constructor given parent*/
+    public Node(Operator parent){
+        this();
+        if (parent!=null){
+            if (parent.leftChild==null){
+                parent.leftChild=this;
+                this.parent=parent;
+            }else if (parent.rightChild==null){
+                parent.rightChild=this;
+                this.parent=parent;
+            }
         }
     }
 
+    ///////////
+    //Methods//
+    ///////////
+    /** Get symbol*/
+    public abstract String getSymbol();
+    
+    /** Evaluate the equation given an input */
+    public abstract double evaluate(int x);
 }

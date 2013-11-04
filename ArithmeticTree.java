@@ -20,7 +20,6 @@ public class ArithmeticTree{
     
     /** Adds a node to the tree - Stored by association*/
     public void addNode(Node n){
-        System.out.println("Adding "+n.value);
         //If it is new tree, set startNode
         if(root==null){
             root=n;
@@ -31,23 +30,22 @@ public class ArithmeticTree{
 
     /** Adds a node to the tree recursively - Stored by association*/
     public boolean addNode(Node n, Node addTo){
-        if(!addTo.isOperator()){//If it not an operator, it can't add here
+        if(! (addTo instanceof Operator)){//If it not an operator, it can't add here
             return false;
         }
-        else if(addTo.leftChild==null){//If can add to left node
-            System.out.println("Adding "+n.value+" to "+addTo.value);
-            n.parent=addTo;
-            addTo.leftChild=n;
+        Operator addToOp=(Operator)addTo; //Convert it to an operator
+        if(addToOp.leftChild==null){//If can add to left node
+            n.parent=addToOp;
+            addToOp.leftChild=n;
             return true;
-        }else if(addTo.rightChild==null){//If can add to right node
-            System.out.println("Adding "+n.value+" to "+addTo.value);
-            n.parent=addTo;
-            addTo.rightChild=n;
+        }else if(addToOp.rightChild==null){//If can add to right node
+            n.parent=addToOp;
+            addToOp.rightChild=n;
             return true;
         }else{
-            if(addNode(n,addTo.leftChild)){//Try left child
+            if(addNode(n,addToOp.leftChild)){//Try left child
                 return true;
-            }else if(addNode(n,addTo.rightChild)){//Try right child
+            }else if(addNode(n,addToOp.rightChild)){//Try right child
                 return true;
             }else{
                 return false;
@@ -59,46 +57,28 @@ public class ArithmeticTree{
     @Override
     public String toString(){
         return root.toString();
-        /*
-        //Loop thru the tree saying each node
-        Node n = root;
-        Node end = root;
-        while(n.operator){ //Find bottom left node
-            n=n.leftChild;
-        }
-        
-        while(n.operator){ //Find bottom left node
-            n=n.rightChild;
-        }
+    }
 
-        //Starting at bottom left, output subtree
-        Node l = n;
-        while(l!=n){//Until it hit the bottom right leaf
-            if (l.operator){
-                System.out.println(l.value);
-            }
-            else{
-                System.out.println("("+l.value+l.parent.value+l.parent.rightChild.value+")");
-            }
-        }
-        */
-
+    /** Evaluates entire tree given input*/
+    public double evaluate(int x){
+        return root.evaluate(x);
     }
 
     //Main method
     public static void main(String[] args){
         ArithmeticTree t = new ArithmeticTree();
-        t.addNode(new Node("/",true));
-        t.addNode(new Node("+",true));
-        t.addNode(new Node("12",false));
-        t.addNode(new Node("+",true));
-        t.addNode(new Node("7",false));
-        t.addNode(new Node("*",true));
-        t.addNode(new Node("*",true));
-        t.addNode(new Node("X",false));
-        t.addNode(new Node("X",false));
-        t.addNode(new Node("3",false));
-        t.addNode(new Node("X",false));
+        t.addNode(new Operator(3));
+        t.addNode(new Operator(0));
+        t.addNode(new Value(12));
+        t.addNode(new Operator(0));
+        t.addNode(new Value(7));
+        t.addNode(new Operator(2));
+        t.addNode(new Operator(2));
+        t.addNode(new Value(true));
+        t.addNode(new Value(true));
+        t.addNode(new Value(3));
+        t.addNode(new Value(true));
         System.out.println(t.toString());
+        System.out.println(t.evaluate(10));
     }
 }
