@@ -1,5 +1,5 @@
 /* A subclass of Node that represents either a variable or a constant
- */
+*/
 import java.util.Random;
 public class Value extends Node{
     //////////
@@ -9,9 +9,10 @@ public class Value extends Node{
     public double value;
 
     public boolean isInput;
-    
-    private static int meanValue=100;
-    private static int stdDeviation=50;
+
+    private static final int meanValue=10;
+    private static final int stdDeviation=5;
+    private static final double inputFreq=0.1; //Amount of times a random node should be input
 
     ////////////////
     //Constructors//
@@ -43,21 +44,30 @@ public class Value extends Node{
     public Value(double value){
         this(null,value,false);
     }
-    /** Constructor given nothing - defaults to not input*/
+    /** Constructor given nothing - Random value and random isInput*/
     public Value(){
-        this(null,Value.randomValue(),false);
+        this(null,Value.randomValue(),Value.randomBoolean());
     }
 
 
     ///////////
     //Methods//
     ///////////
+    /** Get a random boolean value*/
+    public static boolean randomBoolean(){
+        Random rand = new Random();
+        if (rand.nextDouble()>inputFreq){
+            return false;
+        }else{
+            return true;
+        }
+    }
     /** This method returns a random value with Gaussian distribution and mean of meanValue*/
     public static double randomValue(){
         Random rand = new Random();
         return rand.nextGaussian()*stdDeviation+meanValue;
     }
-    
+
     /** Converts it to a string */
     public String getSymbol(){
         if (isInput){
@@ -66,7 +76,7 @@ public class Value extends Node{
             return Double.toString(value); 
         }
     }
-    
+
     /** Returns the value of this node as an int*/
     public double evaluate(int x){
         if(isInput){
@@ -81,6 +91,4 @@ public class Value extends Node{
     public String toString(){
         return getSymbol();
     }
-
-
 }

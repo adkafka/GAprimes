@@ -1,18 +1,31 @@
 /* Tree class that represents a mathematical equation
  * Can be evaluated and changed
+ * Only stores the root of the tree but all other nodes are stored by association (children, parents etc)
  */
 public class ArithmeticTree{
     //////////
     //Fields//
     //////////
 
-    Node root;//Where the node begins. In this situation, it is the bottom left of the tree
+    Node root;//Where the node begins. In this situation, it is the top of the tree
 
     
     ////////////////
     //Constructors//
     ////////////////
+    /** No arg constructor*/
+    public ArithmeticTree(){
+        //Generate random root poerator
+        root=new Operator();
+        //Populate until all leafs are Values
+        root.populateNode();
+    }
 
+    /** Constructor given a root node*/
+    public ArithmeticTree(Node root){
+        this.root=root;
+        this.root.parent=null;
+    }
 
     ///////////
     //Methods//
@@ -29,7 +42,7 @@ public class ArithmeticTree{
     }
 
     /** Adds a node to the tree recursively - Stored by association*/
-    public boolean addNode(Node n, Node addTo){
+    private boolean addNode(Node n, Node addTo){
         if(! (addTo instanceof Operator)){//If it not an operator, it can't add here
             return false;
         }
@@ -67,6 +80,7 @@ public class ArithmeticTree{
     //Main method
     public static void main(String[] args){
         ArithmeticTree t = new ArithmeticTree();
+        /*
         t.addNode(new Operator(3));
         t.addNode(new Operator(0));
         t.addNode(new Value(12));
@@ -78,6 +92,7 @@ public class ArithmeticTree{
         t.addNode(new Value(true));
         t.addNode(new Value(3));
         t.addNode(new Value(true));
+        */
         System.out.println(t.toString());
         System.out.println(t.evaluate(10));
     }

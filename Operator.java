@@ -11,7 +11,7 @@ public class Operator extends Node{
 
     public int opIndex;
 
-    private static char[] operators = {'+','-','*','/','^'};
+    private static final char[] operators = {'+','-','*','/','^'};//Make sure there is a corresponding case call in evaluate()
 
     ////////////////
     //Constructors//
@@ -37,7 +37,6 @@ public class Operator extends Node{
     ///////////
     //Methods//
     ///////////
-    
     /** Returns operator as a symbol*/
     public String getSymbol(){
         return Character.toString(operators[opIndex]);
@@ -64,7 +63,6 @@ public class Operator extends Node{
                 return 0;
         }
     }
-
 
     @Override
     public String toString(){            
