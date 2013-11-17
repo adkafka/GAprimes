@@ -2,14 +2,15 @@
  * Can be evaluated and changed
  * Only stores the root of the tree but all other nodes are stored by association (children, parents etc)
  */
+import java.util.ArrayList;
 public class ArithmeticTree{
     //////////
     //Fields//
     //////////
 
     Node root;//Where the node begins. In this situation, it is the top of the tree
-
     
+
     ////////////////
     //Constructors//
     ////////////////
@@ -30,7 +31,7 @@ public class ArithmeticTree{
     ///////////
     //Methods//
     ///////////
-    
+
     /** Adds a node to the tree - Stored by association*/
     public void addNode(Node n){
         //If it is new tree, set startNode
@@ -65,6 +66,27 @@ public class ArithmeticTree{
             }
         }
     }
+    
+    /** Trial method for returning a random node */
+    public Node randomNode(){
+        int dist=0;//Legnth of randomly traversed path from root to leaf
+        Node n = root;
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        while(n.isOperator()){
+            Operator o = (Operator)n;
+            if(Math.random()>=0.5){
+                n=o.leftChild;
+                nodes.add(n);
+                dist++;
+            }else{
+                n=o.rightChild;
+                nodes.add(n);
+                dist++;
+            }
+        }
+        return nodes.get((int)Math.random()*nodes.size());
+    }
+
 
     /** Converts tree into readabble math equation */
     @Override
@@ -79,21 +101,24 @@ public class ArithmeticTree{
 
     //Main method
     public static void main(String[] args){
-        ArithmeticTree t = new ArithmeticTree();
         /*
-        t.addNode(new Operator(3));
-        t.addNode(new Operator(0));
-        t.addNode(new Value(12));
-        t.addNode(new Operator(0));
-        t.addNode(new Value(7));
-        t.addNode(new Operator(2));
-        t.addNode(new Operator(2));
-        t.addNode(new Value(true));
-        t.addNode(new Value(true));
-        t.addNode(new Value(3));
-        t.addNode(new Value(true));
-        */
-        System.out.println(t.toString());
-        System.out.println(t.evaluate(10));
+           t.addNode(new Operator(3));
+           t.addNode(new Operator(0));
+           t.addNode(new Value(12));
+           t.addNode(new Operator(0));
+           t.addNode(new Value(7));
+           t.addNode(new Operator(2));
+           t.addNode(new Operator(2));
+           t.addNode(new Value(true));
+           t.addNode(new Value(true));
+           t.addNode(new Value(3));
+           t.addNode(new Value(true));
+           */
+        for(int i =0; i<20;i++ ){
+            ArithmeticTree t = new ArithmeticTree();
+            System.out.println(t.toString());
+            System.out.println("RandNode \n"+t.randomNode().toString());
+            //System.out.println(t.evaluate(10));
+        }
     }
 }

@@ -50,9 +50,18 @@ public abstract class Node{
         }
     }
 
+    /**Returns true if Node is an Operator*/
+    public boolean isOperator(){
+        if(this instanceof Operator){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     /** Populate a given node until all Leafs are Value*/
     public void populateNode(){
-        System.out.println("PopulateNode - "+this.getSymbol());
+        //System.out.println("PopulateNode - "+this.getSymbol());
         //Check if it is an Operator
         if (this instanceof Operator){
             Operator op = (Operator)this;
