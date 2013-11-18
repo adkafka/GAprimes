@@ -6,13 +6,14 @@ public class Value extends Node{
     //Fields//
     //////////
 
-    public double value;
+    private double value;
 
-    public boolean isInput;
+    private boolean isInput;
 
-    private static final int meanValue=10;
-    private static final int stdDeviation=5;
-    private static final double inputFreq=0.1; //Amount of times a random node should be input
+    private static final int NUM_CHILDREN=0; //How many children th enode should have
+    private static final int MEAN_VALUE=10;
+    private static final int STANDARD_DEVIATION=5;
+    private static final double INPUT_FREQUENCY=0.1; //Amount of times a random node should be input
 
     ////////////////
     //Constructors//
@@ -20,7 +21,7 @@ public class Value extends Node{
 
     /** Constructor given parent, value, and isInput*/
     public Value(Operator parent, double value, boolean isInput){
-        super(parent);
+        super(parent, NUM_CHILDREN);
         this.isInput=isInput;
         this.value=value;
     }
@@ -56,16 +57,16 @@ public class Value extends Node{
     /** Get a random boolean value*/
     public static boolean randomBoolean(){
         Random rand = new Random();
-        if (rand.nextDouble()>inputFreq){
+        if (rand.nextDouble()>INPUT_FREQUENCY){
             return false;
         }else{
             return true;
         }
     }
-    /** This method returns a random value with Gaussian distribution and mean of meanValue*/
+    /** This method returns a random value with Gaussian distribution and mean of MEAN_VALUE*/
     public static double randomValue(){
         Random rand = new Random();
-        return rand.nextGaussian()*stdDeviation+meanValue;
+        return rand.nextGaussian()*STANDARD_DEVIATION+MEAN_VALUE;
     }
 
     /** Converts it to a string */
