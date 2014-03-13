@@ -20,21 +20,21 @@ public class Value extends Node{
     ////////////////
 
     /** Constructor given parent, value, and isInput*/
-    public Value(Operator parent, double value, boolean isInput){
+    public Value(Node parent, double value, boolean isInput){
         super(parent, NUM_CHILDREN);
         this.isInput=isInput;
         this.value=value;
     }
     /** Constructor given parent*/
-    public Value(Operator parent){
+    public Value(Node parent){
         this(parent,Value.randomValue(),false);
     }
     /** Constructor given value and parent*/
-    public Value(Operator parent, double value){
+    public Value(Node parent, double value){
         this(parent,value,false);
     }
     /** Constructor parent and isInput*/
-    public Value(Operator parent, boolean isInput){
+    public Value(Node parent, boolean isInput){
         this(parent,0,isInput);
     }
     /** Constructor given isInput*/
@@ -49,11 +49,20 @@ public class Value extends Node{
     public Value(){
         this(null,Value.randomValue(),Value.randomBoolean());
     }
+    /** Deep copy */
+    public Value(Value v){
+        this(null,v.value,v.isInput);
+    }
 
 
     ///////////
     //Methods//
     ///////////
+    /** Perform the deep copy */
+    public Value deepCopy(){
+        return new Value(this);
+    }
+
     /** Get a random boolean value*/
     public static boolean randomBoolean(){
         Random rand = new Random();
