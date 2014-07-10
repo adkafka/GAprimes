@@ -2,6 +2,7 @@
  * class that represents possible nodes in a tree
  */
 import java.util.ArrayList;
+import java.util.Random;
 public abstract class Node implements Cloneable{
     //////////
     //Fields//
@@ -10,6 +11,8 @@ public abstract class Node implements Cloneable{
     protected Node[] children;
     protected Node parent;
     protected int numChildren;
+
+    public static Random rand = new Random();
 
     private static final double OP_FREQ = 0.4;//Frequency that when a random Node is created, it will be an operator
 
@@ -95,7 +98,7 @@ public abstract class Node implements Cloneable{
     
     /** Create and return a random Node, could be Operator or Value - freq decided by OP_FREQ */
     public static Node randomNode(){
-        if (Math.random()>OP_FREQ){//create a Value
+        if (rand.nextInt()>OP_FREQ){//create a Value
             return new Value();
         }else{
             return new Operator();

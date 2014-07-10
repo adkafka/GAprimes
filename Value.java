@@ -10,6 +10,8 @@ public class Value extends Node{
 
     private boolean isInput;
 
+    public static Random rand = new Random();
+
     private static final int NUM_CHILDREN=0; //How many children th enode should have
     private static final int MEAN_VALUE=10;
     private static final int STANDARD_DEVIATION=5;
@@ -65,7 +67,6 @@ public class Value extends Node{
 
     /** Get a random boolean value*/
     public static boolean randomBoolean(){
-        Random rand = new Random();
         if (rand.nextDouble()>INPUT_FREQUENCY){
             return false;
         }else{
@@ -74,7 +75,6 @@ public class Value extends Node{
     }
     /** This method returns a random value with Gaussian distribution and mean of MEAN_VALUE*/
     public static double randomValue(){
-        Random rand = new Random();
         return rand.nextGaussian()*STANDARD_DEVIATION+MEAN_VALUE;
     }
 

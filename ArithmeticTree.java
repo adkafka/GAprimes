@@ -3,6 +3,7 @@
  * Only stores the root of the tree but all other nodes are stored by association (children, parents etc)
  */
 import java.util.ArrayList;
+import java.util.Random;
 public class ArithmeticTree{
     //////////
     //Fields//
@@ -11,6 +12,8 @@ public class ArithmeticTree{
     private Node root;//Where the node begins. In this situation, it is the top of the tree
     
     private ArrayList<Node> nodes; //Where all nodes will be stored
+
+    public static Random rand = new Random();
 
     ////////////////
     //Constructors//
@@ -117,10 +120,10 @@ public class ArithmeticTree{
      */
     public void mutate(){
         //Select a random node
-        int randomSpot = (int)(Math.random()*nodes.size());
+        int randomSpot = (int)(rand.nextDouble()*nodes.size());
         Node mutate;
         do{
-            randomSpot = (int)(Math.random()*nodes.size());
+            randomSpot = (int)(rand.nextDouble()*nodes.size());
             mutate = nodes.get(randomSpot);
         }while(mutate==root);//Don't mutate the root
         System.out.print("Mutating Node "+ mutate.getSymbol());
@@ -144,7 +147,7 @@ public class ArithmeticTree{
         //return a random entry from the arraylist nodes
         Node notRoot = null;
         do{
-            int randomSpot = (int)(Math.random()*nodes.size());
+            int randomSpot = (int)(rand.nextDouble()*nodes.size());
             notRoot = nodes.get(randomSpot);
         }while(notRoot==root);
         return notRoot;
@@ -161,8 +164,15 @@ public class ArithmeticTree{
         return root.evaluate(x);
     }
 
+    public static void setRandSeed(int seed){
+        ArithmeticTree.rand.setSeed(seed);
+        Node.rand.setSeed(seed);
+        Operator.rand.setSeed(seed);
+        Value.rand.setSeed(seed);
+    }
     //Main method
     public static void main(String[] args){
+        setRandSeed(1);
          /*
         //Uses input for testing
         ArithmeticTree t = new ArithmeticTree(new Operator(3));
