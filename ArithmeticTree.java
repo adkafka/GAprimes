@@ -15,6 +15,8 @@ public class ArithmeticTree{
 
     public static Random rand = new Random();
 
+    public static final int MAX_NODES=5000;//After this num is hit, only Values will be generated
+
     ////////////////
     //Constructors//
     ////////////////
@@ -54,11 +56,9 @@ public class ArithmeticTree{
         if(n==null){
             return a;
         }
-        System.out.println("Adding to al "+n.getSymbol());
         a.add(n);
         for(Node ch : n.getChildren()){
             addNodeToAl(a,ch);
-            
         }
         return a;
     }
@@ -68,11 +68,17 @@ public class ArithmeticTree{
         if(n==null){
             return a;
         }
-        System.out.println("Removin from al "+n.getSymbol());
         a.remove(n);
         for(Node ch : n.getChildren()){
             deleteNodeFromAl(a,ch);
         }
+        return a;
+    }
+
+    /** Swap nodes in ArrayList - UNUSED as of now */
+    public static ArrayList<Node> swapInAl(ArrayList<Node> a, Node in, Node out){
+        a.remove(out);
+        a.add(in);
         return a;
     }
 
@@ -112,34 +118,25 @@ public class ArithmeticTree{
         return false;
     }
     
-    /** Mutates the arithmetic tree
-     *
-     *  Methods:
-     *  1 - Find random node and replace it with another of its kind
-     *  2 - Find random node and replace it with any kind (Creates 'Junk DNA' (unused Nodes) but thats ok because that is what nature does too)
-     */
+    /** Mutates the arithmetic tree */
     public void mutate(){
         //Select a random node
-        int randomSpot = (int)(rand.nextDouble()*nodes.size());
-        Node mutate;
-        do{
-            randomSpot = (int)(rand.nextDouble()*nodes.size());
-            mutate = nodes.get(randomSpot);
-        }while(mutate==root);//Don't mutate the root
-        System.out.print("Mutating Node "+ mutate.getSymbol());
-        //Choose which method to use to mutate
+        int randomSpot = rand.nextInt(nodes.size());
+        Node mutate = nodes.get(randomSpot);
+        mutate.mutate();
+    }
 
-        //Replace this node with a random one of its kind
-        Node newNode=null;
-        if(mutate instanceof Operator){
-            newNode=new Operator();
-
-        }else if(mutate instanceof Value){
-            newNode=new Value();
-        }
-        System.out.println(" with "+newNode.getSymbol());
-        mutate.replace(newNode, nodes);
-        nodes.set(randomSpot,newNode);
+    /** Perform a genetic crossover between current AT and param */
+    public ArithmeticTree crossover(ArithmeticTree p){
+        //First, clone the instance AT
+        ArithmeticTree kid = new ArithmeticTree(this);
+        //Choose instance's node point
+        Node thisNode = kid.randomNode();
+        //Choose p's node point
+        Node pNode = p.randomNode();
+        //Perform crossover
+        thisNode.replace(pNode,kid.nodes);
+        return kid;
     }
 
     /** Returs a random node from nodes*/ 
@@ -147,7 +144,7 @@ public class ArithmeticTree{
         //return a random entry from the arraylist nodes
         Node notRoot = null;
         do{
-            int randomSpot = (int)(rand.nextDouble()*nodes.size());
+            int randomSpot = (int)(rand.nextDouble()*nodes.size());//change to use nextInt
             notRoot = nodes.get(randomSpot);
         }while(notRoot==root);
         return notRoot;
@@ -164,6 +161,21 @@ public class ArithmeticTree{
         return root.evaluate(x);
     }
 
+    /** Counts how many nodes are in a given tree */
+    public int count(){
+        return count(root,0);
+    }
+    private int count(Node n, int c){
+        if(n==null){
+            return c; 
+        }
+        c++;
+        for(Node child : n.children){
+            c = count(child,c); 
+        }
+        return c;
+    }
+
     public static void setRandSeed(int seed){
         ArithmeticTree.rand.setSeed(seed);
         Node.rand.setSeed(seed);
@@ -172,7 +184,7 @@ public class ArithmeticTree{
     }
     //Main method
     public static void main(String[] args){
-        setRandSeed(1);
+        setRandSeed(20);
          /*
         //Uses input for testing
         ArithmeticTree t = new ArithmeticTree(new Operator(3));
@@ -196,40 +208,29 @@ public class ArithmeticTree{
         //System.out.println("RandNode - "+t.randomNode().toString()+" "+t.nodes.size());
     
         //Mutation test
+        ArithmeticTree s = new ArithmeticTree();
+        System.out.println("S: "+s.toString());
+        System.out.println();
         ArithmeticTree t = new ArithmeticTree();
-        System.out.println(t.toString());
-
-        ArithmeticTree s =  new ArithmeticTree(t);
-
-        System.out.println(s.nodes.size());
-        for(Node no : s.nodes){
-            System.out.println(no.getSymbol());
-        }
-
-        System.out.println("S: "+s.toString());
-
-        s.mutate();
         System.out.println("T: "+t.toString());
-        System.out.println("S: "+s.toString());
+        System.out.println();
 
-        System.out.println(s.nodes.size());
+        System.out.print(s.nodes.size()+" {");
         for(Node no : s.nodes){
-            System.out.println(no.getSymbol());
-        }
+            System.out.print(no.getSymbol()+", ");
+        }System.out.println("}\n");
 
-        System.out.println("Attempting come kind of crossover");
-        ArithmeticTree n = new ArithmeticTree();
-        System.out.println("N: "+n.toString());
+        s = s.crossover(t);
 
-        Node nn = n.randomNode();
-        Node sn = s.randomNode();
-        System.out.println("Replacing "+sn.toString()+"\nwith "+nn.toString());
-        sn.replace(nn,s.nodes);
         System.out.println("S: "+s.toString());
-        System.out.println(s.nodes.size());
-        for(Node no : s.nodes){
-            System.out.println(no.getSymbol());
-        }
+        System.out.println();
 
+        System.out.print(s.nodes.size()+" {");
+        for(Node no : s.nodes){
+            System.out.print(no.getSymbol()+", ");
+        }System.out.println("}\n");
+
+        System.out.println("T: "+t.toString());
+        System.out.println();
     }
 }

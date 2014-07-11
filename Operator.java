@@ -13,7 +13,6 @@ public class Operator extends Node{
 
     private static final char[] operators = {'+','-','*','/','^'};//Make sure there is a corresponding case call in evaluate()
     private static final int NUM_CHILDREN=2; //How many children th enode should have
-    
     ////////////////
     //Constructors//
     ////////////////
@@ -24,7 +23,7 @@ public class Operator extends Node{
     }
     /** Constructor given parent*/
     public Operator(Node parent){
-        this(parent,(int)(rand.nextDouble()*operators.length));
+        this(parent,rand.nextInt(operators.length));
     }
     /** Constructor given opIndex*/
     public Operator(int opIndex){
@@ -32,7 +31,7 @@ public class Operator extends Node{
     }
     /** Constructor given nothing - Gives random*/
     public Operator(){
-        this(null,(int)(rand.nextDouble()*operators.length));
+        this(null,rand.nextInt(operators.length));
     }
     /** Deep copy */
     public Operator(Operator o){
@@ -57,6 +56,11 @@ public class Operator extends Node{
         return Character.toString(operators[opIndex]);
     }
         
+    /** Mutate node */
+    public void mutate(){
+        this.opIndex=rand.nextInt(operators.length);
+    }
+
     /** Returns the value of this node and its children recursively*/
     public double evaluate(int x){
         if(!isFull()){
@@ -72,7 +76,12 @@ public class Operator extends Node{
                 case '*': //Multiply them
                     return children[0].evaluate(x)*children[1].evaluate(x);
                 case '/': //Divide them
-                    return children[0].evaluate(x)/children[1].evaluate(x);
+                    double divisor = children[1].evaluate(x);
+                    if(divisor==0.0){//Divide by zero, I guess just return 0
+                        return 0;
+                    }else{
+                        return children[0].evaluate(x)/divisor;
+                    }
                 case '^': //Raise one to the power of the other
                     return Math.pow(children[0].evaluate(x),children[1].evaluate(x));
                 default:

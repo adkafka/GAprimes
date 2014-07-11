@@ -14,7 +14,7 @@ public abstract class Node implements Cloneable{
 
     public static Random rand = new Random();
 
-    private static final double OP_FREQ = 0.4;//Frequency that when a random Node is created, it will be an operator
+    private static final double OP_FREQ = 0.3;//Frequency that when a random Node is created, it will be an operator
 
 
     ////////////////
@@ -105,32 +105,25 @@ public abstract class Node implements Cloneable{
         }
     }
 
+    /** Mutate node */
+    public abstract void mutate();
+
     /** Replace this node with the supplies node
      *  Also modifies nodes accordingly
      *  Does not work with root node
      * */
     public void replace(Node newNode, ArrayList<Node> nodes){
-        System.out.println("Replace called with NOde: "+newNode.getSymbol()+" replacing "+getSymbol());
         //If newNode is Operator
-        if(newNode.numChildren==2){
-            if(!newNode.isFull()){//Empty node - don't copy children with it
-                replaceNode(newNode,nodes);//replace it
-                //set children also
-                newNode.setChildren(this.getChildren());
-                nodes.remove(this);
-                nodes.add(newNode);
-
-            }
-            else{//Node comes with children
-                replaceNode(newNode,nodes);//replace it
-                ArithmeticTree.deleteNodeFromAl(nodes,this);
-                ArithmeticTree.addNodeToAl(nodes,newNode);
-
-            }
+        if(newNode instanceof Operator){//works if replacing op or value
+            replaceNode(newNode,nodes);//replace it
+            ArithmeticTree.deleteNodeFromAl(nodes,this);
+            ArithmeticTree.addNodeToAl(nodes,newNode);
         }
         //If newNode is Value
-        else if(newNode.numChildren==0){
-            replaceNode(newNode,nodes);
+        else if(newNode instanceof Value){
+            ArithmeticTree.deleteNodeFromAl(nodes, this);//Delete old one from AL
+            replaceNode(newNode,nodes);//Set parents and children
+            ArithmeticTree.addNodeToAl(nodes,newNode);//add new node
         }
     }
     /** Sets parent and child*/
@@ -142,8 +135,6 @@ public abstract class Node implements Cloneable{
                 kids[i]=newNode;
                 //Set parent
                 newNode.parent=this.parent;
-                //Replace arraylist with this
-                //remove all children of this !!!!!!!!
             }
         }
     }
@@ -167,7 +158,12 @@ public abstract class Node implements Cloneable{
         }
         else{
             while(!isFull()){//While not full, set all children
-                Node newChild = Node.randomNode();//Create new random node
+                Node newChild = null;
+                if(nodes.size()>ArithmeticTree.MAX_NODES){//Just add Values to all children
+                    newChild = new Value();
+                }else{
+                    newChild= Node.randomNode();//Create new random node
+                }
                 setEmptyChild(newChild);//set new node as child and parent as parent
                 nodes.add(newChild);//Add new node to the arraylist
                 newChild.populateNode(nodes);//Run recursively on new node

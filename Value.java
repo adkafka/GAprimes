@@ -16,7 +16,7 @@ public class Value extends Node{
     private static final int MEAN_VALUE=10;
     private static final int STANDARD_DEVIATION=5;
     private static final double INPUT_FREQUENCY=0.1; //Amount of times a random node should be input
-
+    private static final int STD_OF_DELTA=5;//Std dev of mutatiuon
     ////////////////
     //Constructors//
     ////////////////
@@ -76,6 +76,18 @@ public class Value extends Node{
     /** This method returns a random value with Gaussian distribution and mean of MEAN_VALUE*/
     public static double randomValue(){
         return rand.nextGaussian()*STANDARD_DEVIATION+MEAN_VALUE;
+    }
+
+    /** Mutate node */
+    public void mutate(){
+        //mutate value
+        double delta = rand.nextGaussian()*STD_OF_DELTA;
+        value+=value;
+        //Maybe turn into input node
+        if(Value.randomBoolean()){
+            isInput=!isInput;
+        }
+
     }
 
     /** Converts it to a string */
