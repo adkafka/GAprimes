@@ -68,22 +68,40 @@ public class Operator extends Node{
         }
         else{
             Node[] children = getChildren();
+            double op1 = children[0].evaluate(x);
+            double op2 = children[1].evaluate(x);
+            double sum;
             switch (operators[opIndex]){
                 case '+': //Add them
-                    return children[0].evaluate(x)+children[1].evaluate(x);
+                    //System.out.println(children[0].getSymbol()+"+"+children[1].getSymbol());
+                    sum = op1+op2;
+                    //System.out.println("SUM: "+sum+" from "+op1+"+"+op2);
+                    return sum;
                 case '-': //Subtract them
-                    return children[0].evaluate(x)-children[1].evaluate(x);
+                    //System.out.println(children[0].getSymbol()+"-"+children[1].getSymbol());
+                    sum = op1-op2;
+                    //System.out.println("SUM: "+sum+" from "+op1+"-"+op2);
+                    return sum;
                 case '*': //Multiply them
-                    return children[0].evaluate(x)*children[1].evaluate(x);
+                    //System.out.println(children[0].getSymbol()+"*"+children[1].getSymbol());
+                    sum = op1*op2;
+                    //System.out.println("SUM: "+sum+" from "+op1+"*"+op2);
+                    return sum;
                 case '/': //Divide them
-                    double divisor = children[1].evaluate(x);
+                    double divisor = op2;
                     if(divisor==0.0){//Divide by zero, I guess just return 0
                         return 0;
                     }else{
-                        return children[0].evaluate(x)/divisor;
+                        //System.out.println(children[0].getSymbol()+"/"+children[1].getSymbol());
+                        sum = op1/divisor;
+                        //System.out.println("SUM: "+sum+" from "+op1+"/"+op2);
+                        return sum;
                     }
                 case '^': //Raise one to the power of the other
-                    return Math.pow(children[0].evaluate(x),children[1].evaluate(x));
+                    //System.out.print(children[0].getSymbol()+"^"+children[1].getSymbol());
+                    sum = Math.pow(op1,(int)op2);//power must be an int to avoid Nan
+                    //System.out.println("SUM: "+sum+" from "+op1+"^"+op2);
+                    return sum;
                 default:
                     return 0;
             }

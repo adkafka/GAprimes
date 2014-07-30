@@ -11,7 +11,7 @@ public class ArithmeticTree{
 
     private Node root;//Where the node begins. In this situation, it is the top of the tree
     
-    private ArrayList<Node> nodes; //Where all nodes will be stored
+    public ArrayList<Node> nodes; //Where all nodes will be stored
 
     public static Random rand = new Random();
 
@@ -117,6 +117,46 @@ public class ArithmeticTree{
         }
         return false;
     }
+
+    /** Simplifies the arithmetic tree by folding constants **/
+    public void foldConstants(){
+        for(Node c : root.getChildren()){
+            foldConstants(c);
+        }
+    }
+    private void foldConstants(Node current){
+        if(current instanceof Value){//Cant fold only a Value
+            return;
+        }
+        else if(current == root){
+            return;
+        }else{
+            Node[] childs = current.getChildren();
+
+            if(childs[0] instanceof Value && childs[1] instanceof Value){//BOth children are values
+                Value child1 = (Value)childs[0];
+                Value child2 = (Value)childs[1];
+                if(!child1.isInput() && !child2.isInput()){//Neither children is Input
+                    Node newNode = new Value(current.evaluate(0));
+                    current.replace(newNode,nodes);
+                    System.out.println("Can fold here: "+ childs[0].getSymbol()+current.getSymbol()+childs[1].getSymbol()+
+                            " With "+current.evaluate(0));
+                    foldConstants(newNode.getParent());//Try level up too see if we can do more folding
+                }
+                else{//Can't fold here
+                    return;
+                }
+            }
+            else{
+                if(!(childs[0] instanceof Value)){//Recurse
+                    foldConstants(childs[0]);
+                }
+                if(!(childs[1] instanceof Value)){//Recurse
+                    foldConstants(childs[1]);
+                }
+            }
+        }
+    }
     
     /** Mutates the arithmetic tree */
     public void mutate(){
@@ -181,56 +221,5 @@ public class ArithmeticTree{
         Node.rand.setSeed(seed);
         Operator.rand.setSeed(seed);
         Value.rand.setSeed(seed);
-    }
-    //Main method
-    public static void main(String[] args){
-        setRandSeed(20);
-         /*
-        //Uses input for testing
-        ArithmeticTree t = new ArithmeticTree(new Operator(3));
-        t.addNode(new Operator(0));
-        t.addNode(new Value(12));
-        t.addNode(new Operator(0));
-        t.addNode(new Value(7));
-        t.addNode(new Operator(2));
-        t.addNode(new Operator(2));
-        t.addNode(new Value(true));
-        t.addNode(new Value(true));
-        t.addNode(new Value(3));
-        t.addNode(new Value(true));
-        System.out.println(t.toString());
-*/
-
-        
-        //Random arithmetic tree
-        //ArithmeticTree t = new ArithmeticTree();
-        //System.out.println(t.toString());
-        //System.out.println("RandNode - "+t.randomNode().toString()+" "+t.nodes.size());
-    
-        //Mutation test
-        ArithmeticTree s = new ArithmeticTree();
-        System.out.println("S: "+s.toString());
-        System.out.println();
-        ArithmeticTree t = new ArithmeticTree();
-        System.out.println("T: "+t.toString());
-        System.out.println();
-
-        System.out.print(s.nodes.size()+" {");
-        for(Node no : s.nodes){
-            System.out.print(no.getSymbol()+", ");
-        }System.out.println("}\n");
-
-        s = s.crossover(t);
-
-        System.out.println("S: "+s.toString());
-        System.out.println();
-
-        System.out.print(s.nodes.size()+" {");
-        for(Node no : s.nodes){
-            System.out.print(no.getSymbol()+", ");
-        }System.out.println("}\n");
-
-        System.out.println("T: "+t.toString());
-        System.out.println();
     }
 }

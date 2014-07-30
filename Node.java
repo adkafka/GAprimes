@@ -126,7 +126,7 @@ public abstract class Node implements Cloneable{
             ArithmeticTree.addNodeToAl(nodes,newNode);//add new node
         }
     }
-    /** Sets parent and child*/
+    /** Sets parent and child in the tree*/
     private void replaceNode(Node newNode, ArrayList<Node> nodes){
         Node[] kids = this.parent.getChildren(); //kids of current parent
         for(int i=0; i<kids.length; i++){//loop through currentNodes parents

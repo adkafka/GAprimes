@@ -60,6 +60,11 @@ public class Value extends Node{
     ///////////
     //Methods//
     ///////////
+    /** If is input */
+    public boolean isInput(){
+        return isInput;
+    }
+
     /** Perform the deep copy */
     public Value deepCopy(){
         return new Value(this);
@@ -102,6 +107,7 @@ public class Value extends Node{
     /** Returns the value of this node as an int*/
     public double evaluate(int x){
         if(isInput){
+            //System.out.println("X: "+x);
             return x;
         }
         else{
