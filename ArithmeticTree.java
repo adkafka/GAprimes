@@ -51,6 +51,11 @@ public class ArithmeticTree{
     //Methods//
     ///////////
 
+    /** Get size of AL (How many nodes) */
+    public int size(){
+        return nodes.size();
+    }
+
     /** Add Node to array List */ 
     public static ArrayList<Node> addNodeToAl(ArrayList<Node> a, Node n){
         if(n==null){
@@ -125,22 +130,27 @@ public class ArithmeticTree{
         }
     }
     private void foldConstants(Node current){
+        if(current==null){
+            System.err.println("ERROR: ");
+            return;
+        }
         if(current instanceof Value){//Cant fold only a Value
             return;
         }
         else if(current == root){
             return;
         }else{
-            Node[] childs = current.getChildren();
+            Node[] childs = current.getChildren();//Can throw null pointer???
 
             if(childs[0] instanceof Value && childs[1] instanceof Value){//BOth children are values
                 Value child1 = (Value)childs[0];
                 Value child2 = (Value)childs[1];
                 if(!child1.isInput() && !child2.isInput()){//Neither children is Input
                     Node newNode = new Value(current.evaluate(0));
+                    System.out.println("This Node: "+current.getSymbol());
                     current.replace(newNode,nodes);
                     System.out.println("Can fold here: "+ childs[0].getSymbol()+current.getSymbol()+childs[1].getSymbol()+
-                            " With "+current.evaluate(0));
+                           " With "+current.evaluate(0));
                     foldConstants(newNode.getParent());//Try level up too see if we can do more folding
                 }
                 else{//Can't fold here
