@@ -93,6 +93,10 @@ public class Individual implements Comparable{
         return (name+"\t\t\t"+fitness+"\t\t\t"+equation.toString());
     }
 
+    public void checkValid(){
+        equation.checkValid();
+    }
+
     /** Main method */
     public static void main(String[] args){
         ArithmeticTree.setRandSeed(20);

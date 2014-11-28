@@ -113,5 +113,17 @@ public class Operator extends Node{
         Node[] children = getChildren();
         return "("+children[0].toString()+getSymbol()+children[1].toString()+")";
     }
+    public static void main(String[] args){
+        Node n = new Operator(1);
+        Node ch1 = new Value(1);
+        Node ch2 = new Value(1);
+        n.setEmptyChild(ch1);
+        n.setEmptyChild(ch2);
+        System.out.println(n.toString());
+        Node N = new Operator(n);
+
+        System.out.println(N.toString());
+
+    }
 
 }
