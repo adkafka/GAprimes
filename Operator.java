@@ -11,7 +11,8 @@ public class Operator extends Node{
 
     public static Random rand = new Random();
 
-    private static final char[] operators = {'+','-','*','/','^'};//Make sure there is a corresponding case call in evaluate()
+    //private static final char[] operators = {'+','-','*','/','^'};//Make sure there is a corresponding case call in evaluate()
+    private static final char[] operators = {'+','-','*','/'};//Make sure there is a corresponding case call in evaluate()
     private static final int NUM_CHILDREN=2; //How many children th enode should have
     ////////////////
     //Constructors//

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Random;
+
 public class ArithmeticTree{
     //////////
     //Fields//
@@ -19,7 +20,7 @@ public class ArithmeticTree{
 
     public static Random rand = new Random();
 
-    public static final int MAX_NODES=5000;//After this num is hit, only Values will be generated
+    protected static final int MAX_NODES=5000;//After this num is hit, only Values will be generated. Note not a HARD max
 
     ////////////////
     //Constructors//
@@ -35,8 +36,6 @@ public class ArithmeticTree{
 
         //Populate until all leafs are Values
         root.populateNode(nodes);
-        System.out.println("New Tree");
-        checkValid();
     }
 
     /** Constructor given a root node*/
@@ -44,8 +43,6 @@ public class ArithmeticTree{
         this.root=root;
         nodes = new ArrayList<Node>();
         addNodeToAl(nodes,root);
-        System.out.println("New Tree");
-        checkValid();
     }
     
     /** Deep copy constructor */
@@ -53,8 +50,6 @@ public class ArithmeticTree{
         root=t.root.deepCopy();
         nodes = new ArrayList<Node>();
         addNodeToAl(nodes,root);
-        System.out.println("New Tree - just copied");
-        checkValid();
     }
 
     ///////////
@@ -83,7 +78,7 @@ public class ArithmeticTree{
         if(n==null){
             return a;
         }
-        if(!a.remove(n)){
+        if(!a.remove(n)){//Error!
             System.err.println("Deleted node not in AL: "+n.getSymbol());
             System.exit(1);
         }
@@ -138,16 +133,9 @@ public class ArithmeticTree{
 
     /** Simplifies the arithmetic tree by folding constants **/
     public void foldConstants(){
-        //System.out.println("Symbols in AL:");
-        //for(Node n :  nodes){
-            //Node[] ns = n.getChildren();
-            //System.out.print(n.getSymbol());
-        //}System.out.println();
         for(Node c : root.getChildren()){
             foldConstants(c);
         }
-        System.out.println("Just folded constants");
-        checkValid();
     }
     private void foldConstants(Node current){
         if(current==null){//Shouldn't happen
@@ -160,30 +148,13 @@ public class ArithmeticTree{
         else if(current == root){
             return;
         }else{//An op that is not the root
-            Node[] childs = current.getChildren();//Can throw null pointer??? - Not anymore I believe
-
+            Node[] childs = current.getChildren();
             if(childs[0] instanceof Value && childs[1] instanceof Value){//Both children are values
                 Value child1 = (Value)childs[0];
                 Value child2 = (Value)childs[1];
                 if(!child1.isInput() && !child2.isInput()){//Neither children is Input (they are constants)
                     Node newNode = new Value(current.evaluate(0));//We will be replacing current with this
-                    //System.out.println("This Node: "+current.getSymbol());
-                    //System.out.println("Parent: "+current.getParent().getSymbol());
-                    //System.out.println("Child1: "+child1.getSymbol());
-                    //System.out.println("Child2: "+child2.getSymbol());
-                    //System.out.println("Can fold here: "+ childs[0].getSymbol()+current.getSymbol()+childs[1].getSymbol()+
-                           //" With "+newNode.getSymbol());
-                    //System.out.println("Parents eval: "+current.getParent().toString());
                     current.replace(newNode,nodes);
-                    //System.out.println("Folded:");
-                    //System.out.println(toString()+"\n");
-                    //////////
-                    //System.out.println("Symbols in AL:");
-                    //for(Node n :  nodes){
-                        //Node[] ns = n.getChildren();
-                        //System.out.print(n.getSymbol()+", ");
-                    //}System.out.println();
-                    //////////
                     foldConstants(newNode.getParent());//Try level up too see if we can do more folding
                 }
                 else{//Can't fold here
@@ -207,39 +178,19 @@ public class ArithmeticTree{
         int randomSpot = rand.nextInt(nodes.size());
         Node mutate = nodes.get(randomSpot);
         mutate.mutate();
-        System.out.println("Just mutated");
-        checkValid();
     }
 
     /** Perform a genetic crossover between current AT and param */
     public ArithmeticTree crossover(ArithmeticTree p){
-        System.out.println("Before crossover called");
-        System.out.println(toString());
-        checkValid();
-
         //First, clone the instance AT
         ArithmeticTree kid = new ArithmeticTree(this);
-        ArithmeticTree par = new ArithmeticTree(p);//Clone other parent!
-        System.out.println("First, clone the instance AT and the other parent");
-        checkValid();
-
+        ArithmeticTree par = new ArithmeticTree(p);//Clone other parent! caused my horribly hard to find bug
         //Choose instance's node point
         Node thisNode = kid.randomNode();
-        System.out.println("Choose instance's node point: "+ thisNode.getSymbol());
-        checkValid();
-
         //Choose p's node point
         Node pNode = par.randomNode();
-        System.out.println("Choose par's node point: "+pNode.getSymbol());
-        checkValid();
-
         //Perform crossover
         thisNode.replace(pNode,kid.nodes);
-        System.out.println("Perform crossover");
-        checkValid();
-
-        System.out.println("Just crossed over");
-        checkValid();
         return kid;
     }
 
@@ -315,6 +266,8 @@ public class ArithmeticTree{
         }
         
     }
+
+    /** Prints the ArrayList for the AT */
     private void printAL(ArrayList<Node> a, String s){
         System.out.println("AL "+s+":");
         for(Node n : a){
@@ -322,25 +275,11 @@ public class ArithmeticTree{
         }
     }
 
+    /** Sets the random seed to use, useful for debugging and replicating results */
     public static void setRandSeed(int seed){
         ArithmeticTree.rand.setSeed(seed);
         Node.rand.setSeed(seed);
         Operator.rand.setSeed(seed);
         Value.rand.setSeed(seed);
-    }
-    public static void main(String[] args){
-        setRandSeed(1);
-        ArithmeticTree t = new ArithmeticTree();
-        ArithmeticTree s = new ArithmeticTree();
-        System.out.println("t: "+t.toString()+"\ns: "+s.toString());
-        ArithmeticTree u = t.crossover(s);
-        System.out.println("u: "+u.toString());
-        System.out.println("t: "+t.toString()+"\ns: "+s.toString());
-        System.out.println("t");
-        t.checkValid();
-        System.out.println("s");
-        s.checkValid();
-        System.out.println("u");
-        u.checkValid();
     }
 }
