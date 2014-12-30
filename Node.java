@@ -14,7 +14,7 @@ public abstract class Node implements Cloneable{
 
     public static Random rand = new Random();
 
-    protected static final double OP_FREQ = 0.45;//Frequency that when a random Node is created, it will be an operator
+    protected static final double OP_FREQ = 0.35;//Frequency that when a random Node is created, it will be an operator
 
 
     ////////////////
