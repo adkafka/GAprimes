@@ -122,7 +122,7 @@ public class Population{
         s.append("+------------+------------------------+\n");
         for(Individual i : pop){
             s.append(String.format("| %10d | %13.2f | %6d |\n",i.name(),i.getFitness(),i.getEquation().size()));
-            i.checkValid("At printout");
+            //i.checkValid("At printout");
         }
         s.append("+------------+------------------------+\n");
         return s.toString();

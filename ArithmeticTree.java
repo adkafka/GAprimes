@@ -137,7 +137,7 @@ public class ArithmeticTree{
         for(Node c : root.getChildren()){
             foldConstants(c);
         }
-        checkValid("foldConstants");
+        //checkValid("foldConstants");
     }
     private void foldConstants(Node current){
         if(current==null){//Shouldn't happen
@@ -180,21 +180,22 @@ public class ArithmeticTree{
         int randomSpot = rand.nextInt(nodes.size());
         Node mutate = nodes.get(randomSpot);
         mutate.mutate();
-        checkValid("mutate");
+        //checkValid("mutate");
     }
     /** Mutates the AT by choosing a node at random adn replacing it with a completly new subtree - Increases diversity*/
     public void mutateBroad(){
+        //System.out.println("\nEntered mutB");
         //Select a random node
-        int randomSpot = rand.nextInt(nodes.size());
-        Node mutate = nodes.get(randomSpot);
-        while(mutate==root){//Dont choose the root
-            randomSpot = rand.nextInt(nodes.size());
-            mutate = nodes.get(randomSpot);
-        }
+        Node mutate = randomNode();
+        //System.out.println("MutateNode:"+mutate.getSymbol());
         Node newOp = new Operator();
-        newOp.populateNode(nodes);//Fill the subtree
+        newOp.populateNode(new ArrayList<Node>());//Fill the subtree
+        //System.out.println("Replacing with:"+newOp.toString());
         mutate.replace(newOp,nodes);//Replace it
-        checkValid("mutateBroad");
+        //printAL(nodes,"AL:");
+        //System.out.println(toString());
+        //checkValid("mutateBroad");
+        //System.out.println("Exited mutB\n");
     }
 
     /** Perform a genetic crossover between current AT and param */
@@ -208,7 +209,7 @@ public class ArithmeticTree{
         Node pNode = par.randomNode();
         //Perform crossover
         thisNode.replace(pNode,kid.nodes);
-        checkValid("crossover");
+        //checkValid("crossover");
         return kid;
     }
 
@@ -217,7 +218,7 @@ public class ArithmeticTree{
         //return a random entry from the arraylist nodes
         Node notRoot = null;
         do{
-            int randomSpot = (int)(rand.nextDouble()*nodes.size());//change to use nextInt
+            int randomSpot = rand.nextInt(nodes.size());
             notRoot = nodes.get(randomSpot);
         }while(notRoot==root);
         return notRoot;
@@ -264,17 +265,20 @@ public class ArithmeticTree{
             //Chech if this is in AL
             if(! nodes.contains(t)){
                 System.err.println("Node not in AL!!!\n"+s);
+                Thread.dumpStack();
                 System.exit(1);
             }
             //Check if parent is in AL (unless root)
             if(! nodes.contains(t.getParent()) && t!=root){
                 System.err.println("Parent node ("+t.getParent().getSymbol()+")[Parent of "+t.getSymbol()+"] in AL!!!\n"+s);
+                Thread.dumpStack();
                 System.exit(1);
             }
             for(Node ch : t.getChildren()){
                 //Test that children are in AL
                 if(! nodes.contains(ch)){
                     System.err.println("Child not in Node!!!!\n"+s);
+                    Thread.dumpStack();
                     System.exit(1);
                 }
                 if(!visited.contains(ch)){
@@ -282,17 +286,28 @@ public class ArithmeticTree{
                     visited.add(ch);
                 }
             }
-            
+        }
+        if(nodes.size()!=visited.size()){
+            System.err.println("Size of AL and nodes in tree are unequal!!!!\n"+s);
+            Thread.dumpStack();
+            System.exit(1);
+        }
+        for(Node n : nodes){//Make sure all nodes in AL have been visited and the sizes are equal
+            if(! visited.contains(n)){
+                System.err.println("Node in AL but not in tree!!!!\n"+s);
+                Thread.dumpStack();
+                System.exit(1);
+            }
         }
         
     }
 
     /** Prints the ArrayList for the AT */
-    private void printAL(ArrayList<Node> a, String s){
+    private static void printAL(ArrayList<Node> a, String s){
         System.out.println("AL "+s+":");
         for(Node n : a){
             System.out.print(n.getSymbol()+',');
-        }
+        }System.out.println();
     }
 
     /** Sets the random seed to use, useful for debugging and replicating results */
@@ -305,11 +320,36 @@ public class ArithmeticTree{
 
     //Test of new mutation method
     public static void main(String[] args){
-        ArithmeticTree t = new ArithmeticTree();
-        System.out.println(t.toString());
-        System.out.println("Better mutate");
-        t.mutateBroad();
-        t.checkValid("Main");
-        System.out.println(t.toString());
+        //for(int j = 0; j<1000; j++){
+            int j =10;
+            //System.out.println(j);
+            setRandSeed(j);
+            ArithmeticTree a = new ArithmeticTree();
+            ArithmeticTree b = new ArithmeticTree();
+            ArithmeticTree c = null;
+            for(int i=0;i<3;i++ ){
+                System.out.println(i);
+                System.out.println("A:\n"+a);
+                System.out.println("B:\n"+b);
+                a.checkValid("a");
+                b.checkValid("b");
+                printAL(b.nodes,"B");
+                a.mutateBroad();
+                b.mutateBroad();
+                a.mutate();
+                b.mutate();
+                c = a.crossover(b);
+                System.out.println("C:\n"+c);
+                c.mutateBroad();
+                c.mutate();
+                a.foldConstants();
+                b.foldConstants();
+                c.foldConstants();
+                if(i==0)
+                    a=c;
+                else
+                    b=c;
+            }
+        //}
     }
 }
