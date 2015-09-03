@@ -20,7 +20,7 @@ public class ArithmeticTree{
 
     public static Random rand = new Random();
 
-    protected static final int MAX_NODES=5000;//After this num is hit, only Values will be generated. Note not a HARD max
+    protected static final int TREE_DEPTH=3;//The number of levels in the auto generated trees  (also used in mutation)
 
     ////////////////
     //Constructors//
@@ -35,7 +35,7 @@ public class ArithmeticTree{
         nodes.add(root);
 
         //Populate until all leafs are Values
-        root.populateNode(nodes);
+        root.populateNode(nodes,TREE_DEPTH-1);
     }
 
     /** Constructor given a root node*/
@@ -189,7 +189,7 @@ public class ArithmeticTree{
         Node mutate = randomNode();
         //System.out.println("MutateNode:"+mutate.getSymbol());
         Node newOp = new Operator();
-        newOp.populateNode(new ArrayList<Node>());//Fill the subtree
+        newOp.populateNode(new ArrayList<Node>(),TREE_DEPTH);//Fill the subtree
         //System.out.println("Replacing with:"+newOp.toString());
         mutate.replace(newOp,nodes);//Replace it
         //printAL(nodes,"AL:");
@@ -320,6 +320,13 @@ public class ArithmeticTree{
 
     //Test of new mutation method
     public static void main(String[] args){
+        setRandSeed(2);
+        for(int i = 0;i <10; i++){
+            ArithmeticTree a = new ArithmeticTree();
+            System.out.println(a);
+            System.out.println(a.count());
+        }
+        /*
         //for(int j = 0; j<1000; j++){
             int j =10;
             //System.out.println(j);
@@ -351,5 +358,6 @@ public class ArithmeticTree{
                     b=c;
             }
         //}
+        */
     }
 }

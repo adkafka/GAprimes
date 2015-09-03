@@ -152,21 +152,20 @@ public abstract class Node implements Cloneable{
     }
 
     /** Populate a given node until all Leafs are Value*/
-    public void populateNode(ArrayList<Node> nodes){
+    public void populateNode(ArrayList<Node> nodes,int depth){
         if(isFull()){
             return;//Node is already full
         }
         else{
             while(!isFull()){//While not full, set all children
                 Node newChild = null;
-                if(nodes.size()>ArithmeticTree.MAX_NODES){//Just add Values to all children
+                if(depth<=0)//We are at the bottom of the tree, lets only populate with values
                     newChild = new Value();
-                }else{
-                    newChild= Node.randomNode();//Create new random node
-                }
+                else
+                    newChild = new Operator();
                 setEmptyChild(newChild);//set new node as child and parent as parent
                 nodes.add(newChild);//Add new node to the arraylist
-                newChild.populateNode(nodes);//Run recursively on new node
+                newChild.populateNode(nodes,depth-1);//Run recursively on new node
             }
         }
     }

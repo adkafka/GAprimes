@@ -20,7 +20,7 @@ public class Population{
 
     private static Random rand = new Random();
 
-    private static final int DEFAULT_POP_SIZE=30;//How many individuals in the population
+    private static final int DEFAULT_POP_SIZE=100;//How many individuals in the population
 
     private static final int ELITISM_SIZE=1;//Number of indivisuals who will survive unaltered (most fit indivuals)
 
@@ -111,7 +111,7 @@ public class Population{
         StringBuilder s = new StringBuilder(1024);
         s.append("+------------------+------------------+\n");
         s.append(String.format("| %7s: %7d | %8s: %6d |\n", "PopSize", DEFAULT_POP_SIZE, "NumElite", ELITISM_SIZE ));
-        s.append(String.format("| %7s: %1.5f | %8s: %6d |\n", "MutRate", MUTATION_RATE, "MaxNode", ArithmeticTree.MAX_NODES));
+        s.append(String.format("| %7s: %1.5f | %8s: %6d |\n", "MutRate", MUTATION_RATE, "MaxNode", ArithmeticTree.TREE_DEPTH));
         s.append(String.format("| %6s: %1.6f | %7s: %1.5f |\n", "OpFreq", Node.OP_FREQ, "Price/N", Individual.PRICE_PER_NODE ));
         s.append("+------------+------------------------+\n");
         s.append(String.format("| GEN: %5d | AVG_FIT: %13.2f |\n",generation,avg));
@@ -120,9 +120,14 @@ public class Population{
         s.append("+------------+------------------------+\n");
         s.append("|    NAME    |         FITNESS        |\n");
         s.append("+------------+------------------------+\n");
+        int count=0;
         for(Individual i : pop){
             s.append(String.format("| %10d | %13.2f | %6d |\n",i.name(),i.getFitness(),i.getEquation().size()));
+            count++;
             //i.checkValid("At printout");
+            //Only print the first 30
+            if(count>=30)
+                break;
         }
         s.append("+------------+------------------------+\n");
         return s.toString();
@@ -191,10 +196,10 @@ public class Population{
             //System.err.println("Seed: "+s);
             Population p = new Population();
 
-            for(int i = 0; i<500000; i++){
+            for(int i = 0; i<100000; i++){
 
                 //System.out.println(i);
-                if(i%1000==0){
+                if(i%100==0){
                     p.sortByFitness();
                     p.foldConstants();
                     p.calculateStats();
@@ -202,12 +207,27 @@ public class Population{
                     System.out.println(p.mostFit);
                 }
                 p.evolve();
+                if(p.mostFit.fitness <= 1105)
+                    break;
             }
             //Done, clean things up and display
             p.sortByFitness();
-            p.foldConstants();
+            //p.foldConstants();
             System.out.println(p.toString());
             //top.add(p.mostFit);
+            StringBuilder out = new StringBuilder(1024);
+            out.append("+-------------------------------------+\n");
+            out.append("|  X  | Expected | Actual | Difference|\n");
+            out.append("+-------------------------------------+\n");
+            for(int i = 0; i<200; i++){//Print out output
+                int expected;
+                if(i<Individual.key.length)
+                    expected = Individual.key[i];
+                else
+                    expected = -1;
+                out.append(String.format("%5d | %8d | %5.2f | %d |\n",i,expected,p.mostFit.evaluate(i),0));
+            }
+            System.out.println(out.toString());
         //}
         //Population fi = new Population(top.toArray(new Individual[top.size()]));
         //System.out.println(fi);
